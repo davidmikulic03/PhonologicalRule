@@ -69,8 +69,12 @@ public:
 	};
 
 public:
-	Phoneme(std::string representation) {
+	Phoneme(std::string representation, Type placeOfArticulation, Type mannerOfArticulation, bool voiced = false) {
 		m_Representation = representation;
+		AddSpecifier(placeOfArticulation);
+		AddSpecifier(mannerOfArticulation);
+		if (voiced)
+			AddSpecifier(Type::Voiced);
 	}
 	~Phoneme() {
 		//Clear();

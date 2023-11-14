@@ -5,11 +5,9 @@
 int main([[maybe_unused]] int argv, [[maybe_unused]] char** argc) {
 	try {
 
-		Phoneme VoicelessPalatalStop{ "c" };
-		VoicelessPalatalStop.AddSpecifier(Phoneme::Type::Palatal);
-		VoicelessPalatalStop.AddSpecifier(Phoneme::Type::Stop);
+		Phoneme VoicelessPalatalStop("c", Phoneme::Type::Palatal, Phoneme::Type::Stop);
 
-		Phoneme VoicelessLabializedPalatalStop("C");
+		Phoneme VoicelessLabializedPalatalStop("cw", Phoneme::Type::Palatal, Phoneme::Type::Stop);
 		VoicelessLabializedPalatalStop.CopySpecifiers(VoicelessPalatalStop);
 		VoicelessLabializedPalatalStop.AddSpecifier(Phoneme::Type::Labialized);
 
