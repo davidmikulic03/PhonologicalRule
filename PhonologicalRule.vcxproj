@@ -135,7 +135,7 @@
     <ClCompile Include="Source\Source.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Headers\Attribute.h" />
+    <ClInclude Include="Headers\Phoneme.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
