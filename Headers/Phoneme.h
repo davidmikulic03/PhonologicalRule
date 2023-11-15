@@ -1,14 +1,14 @@
 #pragma once
 #include <vector>
 #include <string>
+#include <unordered_map>
 
 class Phoneme {
 public:
 	enum class Type {
 		Labial,
 			Bilabial,
-			LabioDental,
-			LinguoLabial,
+			Labiodental,
 		Coronal,
 			Dental,
 			Alveolar,
@@ -46,6 +46,7 @@ public:
 					Front,
 					Central,
 					Back,
+					Long,
 
 		Consonant,
 			Voiced,
@@ -69,12 +70,18 @@ public:
 	};
 
 public:
-	Phoneme(std::string representation, Type placeOfArticulation, Type mannerOfArticulation, bool voiced = false) {
+	Phoneme() {
+		m_Representation = L"";
+	}
+	Phoneme(std::wstring representation, std::vector<Type> specifiers, bool voicedRounded = false) {
 		m_Representation = representation;
-		AddSpecifier(placeOfArticulation);
-		AddSpecifier(mannerOfArticulation);
-		if (voiced)
+		for (auto& entry : specifiers) {
+			AddSpecifier(entry);
+		}
+		if (Contains(Type::Consonant) && voicedRounded)
 			AddSpecifier(Type::Voiced);
+		else if(voicedRounded)
+			AddSpecifier(Type::Rounded);
 	}
 	~Phoneme() {
 		//Clear();
@@ -83,28 +90,33 @@ public:
 	std::vector<Type> GetSpecifiers() {
 		return m_Specifiers;
 	}
-	void AddSpecifier(Type constraint) {
+	void AddSpecifier(Type specifier) {
 		for (auto& entry : m_Specifiers) {
-			if (constraint == entry)
+			if (entry == specifier)
 				return;
 		}
-		m_Specifiers.push_back(constraint);
+		m_Specifiers.push_back(specifier);
 
-		switch (constraint) {
-		case Type::Bilabial: case Type::LabioDental: case Type::LinguoLabial:
+		switch (specifier) {
+		case Type::Bilabial: case Type::Labiodental:
 			AddSpecifier(Type::Labial);
+			AddSpecifier(Type::Consonant);
 			break;
 		case Type::Dental: case Type::Alveolar: case Type::PostAlveolar: case Type::Retroflex:
 			AddSpecifier(Type::Coronal);
+			AddSpecifier(Type::Consonant);
 			break;
 		case Type::Palatal: case Type::Velar: case Type::Uvular:
 			AddSpecifier(Type::Dorsal);
+			AddSpecifier(Type::Consonant);
 			break;
 		case Type::Pharyngeal: case Type::Glottal:
 			AddSpecifier(Type::Laryngeal);
+			AddSpecifier(Type::Consonant);
 			break;
 		case Type::Nasal:
-			AddSpecifier(Type::Sonorant);
+			if(!Contains(Type::Obstruent))
+				AddSpecifier(Type::Sonorant);
 			break;
 		case Type::Approximant:
 			AddSpecifier(Type::Sonorant);
@@ -119,7 +131,7 @@ public:
 		case Type::Trill: case Type::Tap:
 			AddSpecifier(Type::Approximant);
 			break;
-		case Type::Voiced: case Type::Obstruent: case Type::Ejective: case Type::Click: case Type::Implosive: case Type::Labialized: case Type::Palatalized: case Type::Velarized: case Type::Pharyngealized: case Type::Glottalized: case Type::Aspirated:
+		case Type::Obstruent: case Type::Ejective: case Type::Click: case Type::Implosive: case Type::Labialized: case Type::Palatalized: case Type::Velarized: case Type::Pharyngealized: case Type::Glottalized: case Type::Aspirated:
 			AddSpecifier(Type::Consonant);
 			break;
 		case Type::Stop: case Type::Affricate: case Type::Fricative:
@@ -130,13 +142,19 @@ public:
 			break;
 		}
 	}
-	std::string GetRepresentation() {
+	std::wstring GetRepresentation() {
 		return m_Representation;
 	}
 	void CopySpecifiers(Phoneme from) {
 		m_Specifiers = from.GetSpecifiers();
 	}
-
+	bool Contains(Type specifier) {
+		for (auto& entry : m_Specifiers) {
+			if (entry == specifier)
+				return true;
+		}
+		return false;
+	}
 	void Clear() {
 		for (auto& entry : m_Specifiers) {
 			delete &entry;
@@ -144,8 +162,12 @@ public:
 		delete& m_Representation;
 	}
 
+public:
+	bool operator==(Phoneme phoneme) {
+		return phoneme.m_Specifiers == m_Specifiers && phoneme.m_Representation == m_Representation;
+	}
 
 private:
-	std::string m_Representation;
+	std::wstring m_Representation;
 	std::vector<Type> m_Specifiers;
 };

@@ -23,5 +23,11 @@
     <ClInclude Include="Headers\Phoneme.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Headers\InternationalPhoneticAlphabet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Headers\PhoneticInventory.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

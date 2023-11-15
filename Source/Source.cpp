@@ -1,33 +1,25 @@
 ﻿#include <exception>
 #include <iostream>
+#include <io.h>
+#include <fcntl.h>
 #include "Phoneme.h"
+#include "InternationalPhoneticAlphabet.h"
 
 int main([[maybe_unused]] int argv, [[maybe_unused]] char** argc) {
 	try {
 
-		Phoneme VoicelessPalatalStop("c", Phoneme::Type::Palatal, Phoneme::Type::Stop);
+		InternationalPhoneticAlphabet allPhonemes;
+		std::cout << "Find phoneme(s) with the specifier(s): " << std::endl;
+		
+		std::vector<Phoneme> test = allPhonemes.Find({Phoneme::Type::Affricate, Phoneme::Type::Alveolar, Phoneme::Type::Voiced });
 
-		Phoneme VoicelessLabializedPalatalStop("cw", Phoneme::Type::Palatal, Phoneme::Type::Stop);
-		VoicelessLabializedPalatalStop.CopySpecifiers(VoicelessPalatalStop);
-		VoicelessLabializedPalatalStop.AddSpecifier(Phoneme::Type::Labialized);
-
-		//std::vector<Phoneme::Type> specifiers = VoicelessPalatalStop.GetSpecifiers();
-
-		//for (auto& entry : specifiers) {
-		//	std::cout << entry
-		//}
-
-
-
-
-
-
-
+		for (auto& entry : test) {
+			std::wcout << entry.GetRepresentation() << std::endl;
+		}
 	}
 	catch (std::exception& e) {
 		std::cout << e.what() << std::endl;
 	}
-
 
 	return 0;
 }

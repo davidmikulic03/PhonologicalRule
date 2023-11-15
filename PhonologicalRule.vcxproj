@@ -135,6 +135,8 @@
     <ClCompile Include="Source\Source.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Headers\PhoneticInventory.h" />
+    <ClInclude Include="Headers\InternationalPhoneticAlphabet.h" />
     <ClInclude Include="Headers\Phoneme.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
