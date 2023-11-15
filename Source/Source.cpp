@@ -11,11 +11,8 @@ int main([[maybe_unused]] int argv, [[maybe_unused]] char** argc) {
 		InternationalPhoneticAlphabet allPhonemes;
 		std::cout << "Find phoneme(s) with the specifier(s): " << std::endl;
 		
-		std::vector<Phoneme> test = allPhonemes.Find({Phoneme::Type::Affricate, Phoneme::Type::Alveolar, Phoneme::Type::Voiced });
-
-		for (auto& entry : test) {
-			std::wcout << entry.GetRepresentation() << std::endl;
-		}
+		std::vector<Phoneme> test = allPhonemes.Find({ Phoneme::Type::Velar, Phoneme::Type::Glide });
+		std::cout << test.size() << std::endl;
 	}
 	catch (std::exception& e) {
 		std::cout << e.what() << std::endl;

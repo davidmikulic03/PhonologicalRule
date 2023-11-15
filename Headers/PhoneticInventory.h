@@ -41,10 +41,15 @@ public:
 	std::vector<Phoneme> Find(std::vector<Phoneme::Type> specifiers) {
 		std::vector<Phoneme> output;
 		for (auto& phoneme : m_PhoneticInventory) {
+			bool containsAll = true;
 			for (auto& specifier : specifiers) {
-				if (phoneme.Contains(specifier))
-					output.push_back(phoneme);
+				if (!phoneme.Contains(specifier)) {
+					containsAll = false;
+					break;
+				}
 			}
+			if (containsAll)
+				output.push_back(phoneme);
 		}
 		return output;
 	}
