@@ -2,13 +2,12 @@
 #include "Phoneme.h"
 #include "PhoneticInventory.h"
 
-class InternationalPhoneticAlphabet : private PhoneticInventory {
+class InternationalPhoneticAlphabet : public PhoneticInventory {
 public:
 	InternationalPhoneticAlphabet() {
 		AddAllRecognizedPhonemes();
 	}
-public:
-	using PhoneticInventory::Find;
+
 private:
 	void AddAllRecognizedPhonemes() {
 		// Nasals
@@ -123,9 +122,9 @@ private:
 		// Approximants										
 		AddPhoneme(	Phoneme(L"w",	{ Phoneme::Type::Bilabial,		Phoneme::Type::Velar,			Phoneme::Type::Glide,		Phoneme::Type::Labialized },	true));
 		AddPhoneme(	Phoneme(L"ɥ",	{ Phoneme::Type::Palatal,		Phoneme::Type::Glide,			Phoneme::Type::Labialized },true));
+		AddPhoneme(	Phoneme(L"j",	{ Phoneme::Type::Palatal,		Phoneme::Type::Glide },			true));
 		AddPhoneme(	Phoneme(L"ɰ",	{ Phoneme::Type::Velar,			Phoneme::Type::Glide },			true));
-		AddPhoneme(	Phoneme(L"ʋ",	{ Phoneme::Type::Labiodental,	Phoneme::Type::Glide },			true));
-		AddPhoneme(	Phoneme(L"j",	{ Phoneme::Type::Palatal,		Phoneme::Type::Approximant },	true));
+		AddPhoneme(	Phoneme(L"ʋ",	{ Phoneme::Type::Labiodental,	Phoneme::Type::Approximant },			true));
 		AddPhoneme(	Phoneme(L"ɹ",	{ Phoneme::Type::Alveolar,		Phoneme::Type::Approximant },	true));
 		AddPhoneme(	Phoneme(L"ɻ",	{ Phoneme::Type::Retroflex,		Phoneme::Type::Approximant },	true));
 		AddPhoneme(	Phoneme(L"l",	{ Phoneme::Type::Alveolar,		Phoneme::Type::Approximant,		Phoneme::Type::Lateral },	true));
@@ -227,8 +226,4 @@ private:
 		AddPhoneme(	Phoneme(L"ɑ",	{ Phoneme::Type::Open,			Phoneme::Type::Back },			false));
 		AddPhoneme(	Phoneme(L"ɒ",	{ Phoneme::Type::Open,			Phoneme::Type::Back },			true));
 	}
-
-
-
-public:
 };

@@ -17,20 +17,25 @@ public:
 			if (phoneme == entry)
 				return;
 		}
-		m_PhoneticInventory.push_back(phoneme);
+		m_PhoneticInventory.emplace_back(phoneme);
+	}
+	void AddPhonemes(std::vector<Phoneme> phonemes) {
+		for (auto& phoneme : phonemes) {
+			AddPhoneme(phoneme);
+		}
 	}
 	std::vector<Phoneme> GetPhonemes() {
 		return m_PhoneticInventory;
 	}
-
 public:
 	Phoneme::Type GetSpecifier(std::string name) {
 		auto search = m_Map.find(name);
 		if (search == m_Map.end())
-			std::abort();
+			return Phoneme::Type(0);
 		else
 			return m_Map[search->first];
 	}
+	
 	Phoneme Find(std::wstring representation) {
 		for (auto& entry : m_PhoneticInventory) {
 			if (entry.GetRepresentation() == representation)
@@ -38,20 +43,34 @@ public:
 		}
 		return Phoneme();
 	}
-	std::vector<Phoneme> Find(std::vector<Phoneme::Type> specifiers) {
+	std::vector<Phoneme> Find(std::vector<Phoneme::Type> include, std::vector<Phoneme::Type> exclude) {
 		std::vector<Phoneme> output;
-		for (auto& phoneme : m_PhoneticInventory) {
-			bool containsAll = true;
-			for (auto& specifier : specifiers) {
-				if (!phoneme.Contains(specifier)) {
-					containsAll = false;
+		for (unsigned int i = 0; i < m_PhoneticInventory.size(); i++) {
+			bool hasNoExclusions = true;
+			bool hasAllInclusions = true;
+			for (auto& exclusion : exclude) {
+				if (m_PhoneticInventory[i].Contains(exclusion)) {
+					hasNoExclusions = false;
 					break;
 				}
 			}
-			if (containsAll)
-				output.push_back(phoneme);
+			for (auto& inclusion : include) {
+				if (!m_PhoneticInventory[i].Contains(inclusion)) {
+					hasAllInclusions = false;
+					break;
+				}
+			}
+			if (hasNoExclusions && hasAllInclusions)
+				output.emplace_back(m_PhoneticInventory[i]);
 		}
 		return output;
+	}
+	size_t Count() {
+		return m_PhoneticInventory.size();
+	}
+public:
+	void Clear() {
+		m_PhoneticInventory.clear();
 	}
 public:
 	/*static std::unordered_map<Phoneme::Type, std::string> DefineMap() {
@@ -167,6 +186,8 @@ public:
 			map["Implosive"] = Phoneme::Type::Implosive;
 		return map;
 	}
+
+	// N[+Alveolar] > [+Velar] / _C[+Velar]
 	
 private:
 	std::vector<Phoneme> m_PhoneticInventory;

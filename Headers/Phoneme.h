@@ -6,6 +6,7 @@
 class Phoneme {
 public:
 	enum class Type {
+		NONE = 0,
 		Labial,
 			Bilabial,
 			Labiodental,
@@ -32,21 +33,21 @@ public:
 					Tap,
 					Trill,
 				Glide,
-				Vowel,
-					Rounded,
+			Vowel,
+				Rounded,
+				Long,
 
-					Close,
-					NearClose,
-					CloseMid,
-					Mid,
-					OpenMid,
-					NearOpen,
-					Open,
+				Close,
+				NearClose,
+				CloseMid,
+				Mid,
+				OpenMid,
+				NearOpen,
+				Open,
 
-					Front,
-					Central,
-					Back,
-					Long,
+				Front,
+				Central,
+				Back,
 
 		Consonant,
 			Voiced,
@@ -67,6 +68,8 @@ public:
 			Ejective,
 			Click,
 			Implosive
+
+	
 	};
 
 public:
@@ -90,12 +93,32 @@ public:
 	std::vector<Type> GetSpecifiers() {
 		return m_Specifiers;
 	}
+	std::wstring GetRepresentation() {
+		return m_Representation;
+	}
+	void CopySpecifiers(Phoneme from) {
+		m_Specifiers = from.GetSpecifiers();
+	}
+	bool Contains(Type specifier) {
+		for (auto& entry : m_Specifiers) {
+			if (entry == specifier)
+				return true;
+		}
+		return false;
+	}
+	void Clear() {
+		for (auto& entry : m_Specifiers) {
+			delete &entry;
+		}
+		delete& m_Representation;
+	}
+public:
 	void AddSpecifier(Type specifier) {
 		for (auto& entry : m_Specifiers) {
 			if (entry == specifier)
 				return;
 		}
-		m_Specifiers.push_back(specifier);
+		m_Specifiers.emplace_back(specifier);
 
 		switch (specifier) {
 		case Type::Bilabial: case Type::Labiodental:
@@ -133,33 +156,86 @@ public:
 			break;
 		case Type::Obstruent: case Type::Ejective: case Type::Click: case Type::Implosive: case Type::Labialized: case Type::Palatalized: case Type::Velarized: case Type::Pharyngealized: case Type::Glottalized: case Type::Aspirated:
 			AddSpecifier(Type::Consonant);
-			break;
-		case Type::Stop: case Type::Affricate: case Type::Fricative:
 			AddSpecifier(Type::Obstruent);
+			break;
+
+		case Type::Stop: case Type::Affricate: 
+			AddSpecifier(Type::Obstruent);
+			break;
+		case Type::Fricative:
+			AddSpecifier(Type::Obstruent);
+			AddSpecifier(Type::Continuant);
 			break;
 		case Type::Sibilant:
 			AddSpecifier(Type::Fricative);
 			break;
 		}
 	}
-	std::wstring GetRepresentation() {
-		return m_Representation;
-	}
-	void CopySpecifiers(Phoneme from) {
-		m_Specifiers = from.GetSpecifiers();
-	}
-	bool Contains(Type specifier) {
-		for (auto& entry : m_Specifiers) {
-			if (entry == specifier)
-				return true;
+	void RemoveSpecifier(Type specifier) {
+		switch (specifier) {
+		case Type::Labial:
+			RemoveSpecifier(Type::Bilabial);
+			RemoveSpecifier(Type::Labiodental);
+			break;
+		case Type::Coronal:
+			RemoveSpecifier(Type::Dental);
+			RemoveSpecifier(Type::Alveolar);
+			RemoveSpecifier(Type::PostAlveolar);
+			RemoveSpecifier(Type::Retroflex);
+			break;
+		case Type::Dorsal:
+			RemoveSpecifier(Type::Palatal);
+			RemoveSpecifier(Type::Velar);
+			RemoveSpecifier(Type::Uvular);
+			break;
+		case Type::Laryngeal:
+			RemoveSpecifier(Type::Pharyngeal);
+			RemoveSpecifier(Type::Glottal);
+			break;
+		case Type::Continuant:
+			RemoveSpecifier(Type::Vowel);
+			RemoveSpecifier(Type::Fricative);
+			RemoveSpecifier(Type::Sonorant);
+			break;
+		case Type::Sonorant:
+			RemoveSpecifier(Type::Nasal);
+			RemoveSpecifier(Type::Approximant);
+			break;
+		case Type::Consonant: {
+			RemoveSpecifier(Type::Approximant);
+			RemoveSpecifier(Type::Obstruent);
+			RemoveSpecifier(Type::Labialized);
+			RemoveSpecifier(Type::Palatalized);
+			RemoveSpecifier(Type::Velarized);
+			RemoveSpecifier(Type::Pharyngealized);
+			RemoveSpecifier(Type::Glottalized);
+			RemoveSpecifier(Type::Aspirated);
+			RemoveSpecifier(Type::Ejective);
+			RemoveSpecifier(Type::Click);
+			RemoveSpecifier(Type::Implosive);
+			RemoveSpecifier(Type::Labial);
+			RemoveSpecifier(Type::Coronal);
+			RemoveSpecifier(Type::Dorsal);
+			RemoveSpecifier(Type::Laryngeal);
+			break;
 		}
-		return false;
-	}
-	void Clear() {
-		for (auto& entry : m_Specifiers) {
-			delete &entry;
+		case Type::Vowel:
+			RemoveSpecifier(Type::Laryngeal);
+		case Type::Obstruent:
+			RemoveSpecifier(Type::Stop);
+			RemoveSpecifier(Type::Affricate);
+			RemoveSpecifier(Type::Fricative);
+			break;
 		}
-		delete& m_Representation;
+
+		unsigned int i = 0;
+		for (auto& entry : m_Specifiers) {
+			if (entry == specifier) {
+				m_Specifiers.erase(m_Specifiers.begin() + i);
+				break;
+			}
+			i++;
+		}
 	}
 
 public:
